@@ -192,7 +192,7 @@
     const availableH = slot.h - 34;
     const maxRows = Math.max(1, Math.floor((availableH + gap) / (cellW + gap)));
     const neededRows = Math.max(1, Math.ceil(state.skinCrops.length / cols));
-    const rows = Math.min(maxRows, Math.max(neededRows, 3));
+    const rows = Math.max(maxRows, neededRows);
 
     const total = rows * cols;
 
