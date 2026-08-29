@@ -19,8 +19,9 @@
 
   <!-- TOOLBAR -->
   <nav class="toolbar">
-    <button class="btn btn-ghost" id="btn-profile">📷 Profile</button>
-    <button class="btn btn-ghost" id="btn-collection">📁 Collection</button>
+    <button class="btn btn-ghost" id="btn-profile">📷 Avatar</button>
+    <button class="btn btn-ghost" id="btn-collection">🪪 Info</button>
+    <button class="btn btn-ghost" id="btn-collector">🏆 Collector</button>
     <button class="btn btn-ghost" id="btn-favorite">⭐ Favorite</button>
     <button class="btn btn-primary" id="btn-add-photos">+ Add Photos</button>
     <button class="btn btn-warning" id="btn-clear">🗑 Clear All</button>
@@ -46,7 +47,8 @@
   <div class="status-bar">
     <div class="status-left">
       <span class="status-dot" id="dot-profile"></span>Profile
-      <span class="status-dot" id="dot-collection"></span>Collection
+      <span class="status-dot" id="dot-collection"></span>Info
+      <span class="status-dot" id="dot-collector"></span>Collector
       <span class="status-dot" id="dot-favorite"></span>Favorite
     </div>
     <span class="status-right" id="status-text">Ready</span>
@@ -55,6 +57,7 @@
   <!-- HIDDEN FILE INPUTS -->
   <input type="file" id="input-profile" accept="image/*" capture="environment" />
   <input type="file" id="input-collection" accept="image/*" capture="environment" />
+  <input type="file" id="input-collector" accept="image/*" capture="environment" />
   <input type="file" id="input-favorite" accept="image/*" capture="environment" />
   <input type="file" id="input-photos" accept="image/*" multiple />
 
