@@ -4,11 +4,12 @@
 
   /* ===== STATE ===== */
   const state = {
-    profileImg: null,
-    collectionImg: null,
-    favoriteImg: null,
+    avatarImg: null,     // small round avatar (overlaps the Info panel)
+    infoImg: null,        // wide "player info" panel (rank, stats, heroes…)
+    collectorImg: null,   // collector badge panel
+    favoriteImg: null,    // favorite hero panel
     skinCrops: [],
-    rowSize: 5,
+    rowSize: 8,
   };
 
   /* ===== DOM CACHE ===== */
@@ -18,6 +19,7 @@
   const inputs = {
     profile: document.getElementById("input-profile"),
     collection: document.getElementById("input-collection"),
+    collector: document.getElementById("input-collector"),
     photos: document.getElementById("input-photos"),
     favorite: document.getElementById("input-favorite"),
   };
@@ -25,6 +27,7 @@
   const buttons = {
     profile: document.getElementById("btn-profile"),
     collection: document.getElementById("btn-collection"),
+    collector: document.getElementById("btn-collector"),
     favorite: document.getElementById("btn-favorite"),
     addPhotos: document.getElementById("btn-add-photos"),
     clear: document.getElementById("btn-clear"),
@@ -36,6 +39,7 @@
   const dots = {
     profile: document.getElementById("dot-profile"),
     collection: document.getElementById("dot-collection"),
+    collector: document.getElementById("dot-collector"),
     favorite: document.getElementById("dot-favorite"),
   };
 
@@ -57,27 +61,78 @@
     ctx.fillStyle = "rgba(0, 229, 255, 0.02)";
     ctx.fillRect(0, 0, canvas.width, 120);
 
-    // Slot definitions (1920x1080 space)
-    const profileSlot = { cx: 180, cy: 200, r: 130, label: "PROFILE" };
-    const collectionSlot = { x: 440, y: 80, w: 760, h: 260, radius: 14, label: "COLLECTION" };
-    const favoriteSlot = { x: 440, y: 380, w: 760, h: 260, radius: 14, label: "FAVORITE" };
-    const skinSlot = { x: 440, y: 680, w: 760, h: 320, label: "SKINS" };
+    /* ===== LAYOUT — mirrors a full "profile summary" screenshot:
+       - full-width SKIN GRID across the top (most of the canvas)
+       - a 3-column strip along the bottom: INFO | COLLECTOR | FAVORITE
+       - a small round AVATAR overlapping the top-left corner of the INFO panel */
+    const margin = 40;
+    const gapY = 20;
+    const bottomH = 260;
 
-    drawRectSlot(collectionSlot);
-    drawRectSlot(favoriteSlot);
+    const skinSlot = {
+      x: margin,
+      y: margin,
+      w: canvas.width - margin * 2,
+      h: canvas.height - margin * 2 - bottomH - gapY,
+      label: "SKINS",
+    };
+
+    const bottomY = skinSlot.y + skinSlot.h + gapY;
+    const gapX = 16;
+    const colW = (skinSlot.w - gapX * 2) / 3;
+
+    const infoSlot = {
+      x: skinSlot.x,
+      y: bottomY,
+      w: colW * 1.15,
+      h: bottomH,
+      radius: 14,
+      label: "INFO",
+    };
+    const collectorSlot = {
+      x: infoSlot.x + infoSlot.w + gapX,
+      y: bottomY,
+      w: colW * 0.8,
+      h: bottomH,
+      radius: 14,
+      label: "COLLECTOR",
+    };
+    const favoriteSlot = {
+      x: collectorSlot.x + collectorSlot.w + gapX,
+      y: bottomY,
+      w: skinSlot.x + skinSlot.w - (collectorSlot.x + collectorSlot.w + gapX),
+      h: bottomH,
+      radius: 14,
+      label: "FAVORITE",
+    };
+
+    // Small avatar overlapping the top-left corner of the INFO panel
+    const avatarSlot = {
+      cx: infoSlot.x + 78,
+      cy: infoSlot.y,
+      r: 68,
+      label: "",
+    };
+
+    // Panel backgrounds + labels
     drawRectSlot(skinSlot);
+    drawRectSlot(infoSlot);
+    drawRectSlot(collectorSlot);
+    drawRectSlot(favoriteSlot);
 
     // Skin grid
     drawSkinGrid(skinSlot);
 
-    // Profile circle slot
-    drawProfileSlot(profileSlot);
-
-    // Draw images
-    drawProfileImage(profileSlot);
-    drawRectImage(collectionSlot, state.collectionImg, collectionSlot.label);
+    // Panel images (each is a simple rect crop, e.g. a cropped screenshot of
+    // that section from the game's own profile screen)
+    drawRectImage(infoSlot, state.infoImg, infoSlot.label);
+    drawRectImage(collectorSlot, state.collectorImg, collectorSlot.label);
     drawRectImage(favoriteSlot, state.favoriteImg, favoriteSlot.label);
     drawSkinCrops(skinSlot);
+
+    // Round avatar drawn last so it visually overlaps the info panel edge
+    drawProfileSlot(avatarSlot);
+    drawProfileImage(avatarSlot, state.avatarImg);
 
     // Watermark
     drawWatermark();
@@ -87,36 +142,31 @@
 
   /* ===== SLOT BACKGROUNDS ===== */
   function drawRectSlot(slot) {
-    // Outer glow
     ctx.shadowColor = "rgba(0, 229, 255, 0.06)";
     ctx.shadowBlur = 0;
 
-    // Inner fill
     ctx.fillStyle = "rgba(18, 18, 34, 0.5)";
     ctx.strokeStyle = "rgba(0, 229, 255, 0.15)";
     ctx.lineWidth = 1;
-    roundRect(ctx, slot.x, slot.y, slot.w, slot.h, slot.radius);
+    roundRect(ctx, slot.x, slot.y, slot.w, slot.h, slot.radius || 14);
     ctx.fill();
     ctx.stroke();
 
-    // Inner border
     ctx.strokeStyle = "rgba(0, 229, 255, 0.06)";
     ctx.lineWidth = 1;
-    roundRect(ctx, slot.x + 3, slot.y + 3, slot.w - 6, slot.h - 6, slot.radius - 3);
+    roundRect(ctx, slot.x + 3, slot.y + 3, slot.w - 6, slot.h - 6, (slot.radius || 14) - 3);
     ctx.stroke();
 
-    // Label
     ctx.shadowColor = "transparent";
     ctx.fillStyle = "rgba(0, 229, 255, 0.3)";
-    ctx.font = "bold 22px -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.font = "bold 20px -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.textAlign = "left";
     ctx.textBaseline = "top";
-    ctx.fillText(slot.label, slot.x + 18, slot.y + 14);
+    ctx.fillText(slot.label, slot.x + 16, slot.y + 12);
   }
 
   function drawProfileSlot(slot) {
-    // Subtle ring
-    ctx.fillStyle = "rgba(18, 18, 34, 0.5)";
+    ctx.fillStyle = "rgba(18, 18, 34, 0.6)";
     ctx.strokeStyle = "rgba(0, 229, 255, 0.15)";
     ctx.lineWidth = 2;
     ctx.beginPath();
@@ -124,68 +174,45 @@
     ctx.fill();
     ctx.stroke();
 
-    // Inner ring
     ctx.strokeStyle = "rgba(0, 229, 255, 0.06)";
     ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.arc(slot.cx, slot.cy, slot.r - 4, 0, Math.PI * 2);
     ctx.stroke();
-
-    // Label
-    ctx.fillStyle = "rgba(0, 229, 255, 0.3)";
-    ctx.font = "bold 22px -apple-system, BlinkMacSystemFont, sans-serif";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "top";
-    ctx.fillText(slot.label, slot.cx, slot.cy - slot.r - 28);
   }
 
   /* ===== SKIN GRID ===== */
   function drawSkinGrid(slot) {
     const cols = state.rowSize;
-    const gap = 14;
+    const gap = 10;
     const startX = slot.x;
-    const startY = slot.y;
+    const startY = slot.y + 34; // leave room for the label
     const cellW = Math.floor((slot.w - gap * (cols - 1)) / cols);
 
-    const total = Math.max(state.skinCrops.length, cols);
-    const rows = Math.ceil(total / cols);
+    const availableH = slot.h - 34;
+    const maxRows = Math.max(1, Math.floor((availableH + gap) / (cellW + gap)));
+    const neededRows = Math.max(1, Math.ceil(state.skinCrops.length / cols));
+    const rows = Math.min(maxRows, Math.max(neededRows, 3));
+
+    const total = rows * cols;
 
     for (let row = 0; row < rows; row++) {
       for (let col = 0; col < cols; col++) {
         const idx = row * cols + col;
-        if (idx >= state.skinCrops.length && idx >= total) continue;
+        if (idx >= total) continue;
 
         const x = startX + col * (cellW + gap);
         const y = startY + row * (cellW + gap);
         const hasImg = idx < state.skinCrops.length;
 
         if (hasImg) {
-          // Filled cell
           ctx.fillStyle = "rgba(18, 18, 34, 0.3)";
           ctx.strokeStyle = "rgba(0, 229, 255, 0.12)";
           ctx.lineWidth = 1;
           roundRect(ctx, x, y, cellW, cellW, 8);
           ctx.fill();
           ctx.stroke();
-
-          // Cell number badge (top-left)
-          const badgeSize = Math.round(cellW * 0.26);
-          ctx.fillStyle = "rgba(0, 229, 255, 0.85)";
-          ctx.strokeStyle = "rgba(0, 132, 180, 0.9)";
-          ctx.lineWidth = 1;
-          ctx.beginPath();
-          ctx.arc(x + badgeSize / 2 + 6, y + badgeSize / 2 + 6, badgeSize / 2, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.stroke();
-
-          // Number
-          ctx.fillStyle = "#0a0a0f";
-          ctx.font = `bold ${Math.round(cellW * 0.11)}px -apple-system, sans-serif`;
-          ctx.textAlign = "center";
-          ctx.textBaseline = "middle";
-          ctx.fillText(idx + 1, x + badgeSize / 2 + 6, y + badgeSize / 2 + 6);
         } else {
-          // Empty cell
           ctx.fillStyle = "rgba(30, 30, 48, 0.3)";
           ctx.strokeStyle = "rgba(0, 229, 255, 0.06)";
           ctx.lineWidth = 1;
@@ -199,33 +226,14 @@
     }
   }
 
-  /* ===== PROFILE SLOT ===== */
-  function drawProfileImage(slot) {
-    if (!state.profileImg) {
-      ctx.fillStyle = "rgba(30, 30, 48, 0.3)";
-      ctx.strokeStyle = "rgba(0, 229, 255, 0.15)";
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.arc(slot.cx, slot.cy, slot.r, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.stroke();
-
-      // Dotted inner circle
-      ctx.setLineDash([6, 6]);
-      ctx.strokeStyle = "rgba(0, 229, 255, 0.08)";
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.arc(slot.cx, slot.cy, slot.r - 6, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.setLineDash([]);
-
-      // Camera hint
+  /* ===== AVATAR ===== */
+  function drawProfileImage(slot, img) {
+    if (!img) {
       ctx.fillStyle = "rgba(0, 229, 255, 0.2)";
-      ctx.font = "bold 42px -apple-system, sans-serif";
+      ctx.font = "bold 34px -apple-system, sans-serif";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.fillText("📷", slot.cx, slot.cy);
-
       return;
     }
 
@@ -233,10 +241,9 @@
     ctx.beginPath();
     ctx.arc(slot.cx, slot.cy, slot.r, 0, Math.PI * 2);
     ctx.clip();
-    drawImageCover(ctx, state.profileImg, slot.cx - slot.r, slot.cy - slot.r, slot.r * 2, slot.r * 2);
+    drawImageCover(ctx, img, slot.cx - slot.r, slot.cy - slot.r, slot.r * 2, slot.r * 2);
     ctx.restore();
 
-    // Outer ring
     ctx.strokeStyle = "rgba(0, 229, 255, 0.5)";
     ctx.lineWidth = 4;
     ctx.beginPath();
@@ -254,24 +261,23 @@
     ctx.lineWidth = 2;
     ctx.shadowColor = "rgba(0, 229, 255, 0.25)";
     ctx.shadowBlur = 12;
-    roundRect(ctx, slot.x + 2, slot.y + 2, slot.w - 4, slot.h - 4, slot.radius);
+    roundRect(ctx, slot.x + 2, slot.y + 2, slot.w - 4, slot.h - 4, slot.radius || 14);
     ctx.stroke();
     ctx.shadowBlur = 0;
 
-    // Dim the label slightly when filled
     ctx.fillStyle = "rgba(0, 229, 255, 0.18)";
-    ctx.font = "bold 22px -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.font = "bold 20px -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.textAlign = "left";
     ctx.textBaseline = "top";
-    ctx.fillText(label, slot.x + 18, slot.y + 14);
+    ctx.fillText(label, slot.x + 16, slot.y + 12);
   }
 
   /* ===== SKIN CROPS ===== */
   function drawSkinCrops(slot) {
     const cols = state.rowSize;
-    const gap = 14;
+    const gap = 10;
     const startX = slot.x;
-    const startY = slot.y;
+    const startY = slot.y + 34;
     const cellW = Math.floor((slot.w - gap * (cols - 1)) / cols);
 
     state.skinCrops.forEach((img, i) => {
@@ -283,16 +289,14 @@
 
       ctx.save();
       ctx.shadowColor = "transparent";
-      roundRect(ctx, x + 4, y + 4, cellW - 8, cellW - 8, 6);
+      roundRect(ctx, x + 3, y + 3, cellW - 6, cellW - 6, 6);
       ctx.clip();
-      ctx.filter = "drop-shadow(0 2px 6px rgba(0,0,0,0.35))";
-      drawImageCover(ctx, img, x + 4, y + 4, cellW - 8, cellW - 8);
-      ctx.filter = "none";
+      drawImageCover(ctx, img, x + 3, y + 3, cellW - 6, cellW - 6);
       ctx.restore();
 
       ctx.strokeStyle = "rgba(0, 229, 255, 0.2)";
       ctx.lineWidth = 1.5;
-      roundRect(ctx, x + 4, y + 4, cellW - 8, cellW - 8, 6);
+      roundRect(ctx, x + 3, y + 3, cellW - 6, cellW - 6, 6);
       ctx.stroke();
     });
   }
@@ -355,7 +359,7 @@
   }
 
   /* ===== BUTTON HANDLERS ===== */
-  function setupPicker(btn, input, setter, dotKey) {
+  function setupPicker(btn, input, setter) {
     btn.onclick = () => {
       input.value = "";
       input.onchange = async (e) => {
@@ -374,8 +378,9 @@
     };
   }
 
-  setupPicker(buttons.profile, inputs.profile, (img) => { state.profileImg = img; });
-  setupPicker(buttons.collection, inputs.collection, (img) => { state.collectionImg = img; });
+  setupPicker(buttons.profile, inputs.profile, (img) => { state.avatarImg = img; });
+  setupPicker(buttons.collection, inputs.collection, (img) => { state.infoImg = img; });
+  setupPicker(buttons.collector, inputs.collector, (img) => { state.collectorImg = img; });
   setupPicker(buttons.favorite, inputs.favorite, (img) => { state.favoriteImg = img; });
 
   buttons.addPhotos.onclick = () => {
@@ -393,17 +398,18 @@
 
   buttons.clear.onclick = () => {
     if (!confirm("Clear all images?")) return;
-    state.profileImg = null;
-    state.collectionImg = null;
+    state.avatarImg = null;
+    state.infoImg = null;
+    state.collectorImg = null;
     state.favoriteImg = null;
     state.skinCrops = [];
-    state.rowSize = 5;
+    state.rowSize = 8;
     rowValue.textContent = state.rowSize;
     render();
   };
 
   buttons.save.onclick = () => {
-    const hasContent = state.profileImg || state.collectionImg || state.favoriteImg || state.skinCrops.length > 0;
+    const hasContent = state.avatarImg || state.infoImg || state.collectorImg || state.favoriteImg || state.skinCrops.length > 0;
     if (!hasContent) {
       statusText.textContent = "Add images first!";
       setTimeout(() => statusText.textContent = "Ready", 2000);
@@ -423,7 +429,7 @@
   };
 
   buttons.rowMinus.onclick = () => {
-    if (state.rowSize > 3) {
+    if (state.rowSize > 4) {
       state.rowSize--;
       rowValue.textContent = state.rowSize;
       render();
@@ -431,7 +437,7 @@
   };
 
   buttons.rowPlus.onclick = () => {
-    if (state.rowSize < 10) {
+    if (state.rowSize < 16) {
       state.rowSize++;
       rowValue.textContent = state.rowSize;
       render();
@@ -440,9 +446,10 @@
 
   /* ===== STATUS ===== */
   function updateStatus() {
-    Object.entries(dots).forEach(([key, dot]) => {
-      dot.classList.toggle("active", !!state[key + "Img"]);
-    });
+    dots.profile.classList.toggle("active", !!state.avatarImg);
+    dots.collection.classList.toggle("active", !!state.infoImg);
+    dots.collector.classList.toggle("active", !!state.collectorImg);
+    dots.favorite.classList.toggle("active", !!state.favoriteImg);
 
     const total = state.skinCrops.length;
     if (total > 0) {
