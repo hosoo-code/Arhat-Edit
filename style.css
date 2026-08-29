@@ -195,17 +195,16 @@ header {
 
 /* ===== PREVIEW AREA ===== */
 .preview-wrap {
-  padding: 16px;
+  padding: 10px;
   background: var(--bg);
   min-height: calc(100vh - 160px);
   display: flex;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
 }
 
 .canvas-container {
-  width: 100%;
-  max-width: 480px;
+  width: min(98vw, calc((100vh - 210px) * (1080 / 1620)));
   background: #000;
   border-radius: 8px;
   overflow: hidden;
