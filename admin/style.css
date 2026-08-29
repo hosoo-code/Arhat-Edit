@@ -1,0 +1,295 @@
+/* Admin panel — dark Mongolian */
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+:root {
+  --bg: #0a0a0f;
+  --panel: #13131d;
+  --panel-2: #1a1a2e;
+  --accent: #00e5ff;
+  --text: #f0f0f5;
+  --text-dim: #a0a0b0;
+  --border: #232338;
+  --success: #10b958;
+  --danger: #e65100;
+  --warning: #d6a716;
+}
+
+html, body {
+  margin: 0; padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  overflow-x: hidden;
+  height: 100vh;
+  width: 100vw;
+}
+
+/* ===== HEADER ===== */
+header {
+  background: linear-gradient(135deg, #0d0d17 0%, #1a1a2e 100%);
+  padding: 14px 16px 10px;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+header h1 {
+  font-size: 22px;
+  margin: 0;
+  color: var(--accent);
+  text-align: center;
+  text-shadow: 0 0 10px rgba(0,229,255,.3);
+}
+header .subtitle {
+  font-size: 13px;
+  color: var(--text-dim);
+  text-align: center;
+  margin-top: 2px;
+}
+
+/* ===== LOGIN ===== */
+.login-wrap {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+  gap: 20px;
+}
+.login-box {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px;
+  width: 100%;
+  max-width: 360px;
+  box-shadow: 0 12px 40px rgba(0,0,0,.5);
+}
+.login-box h2 { margin: 0 0 8px; font-size: 20px; }
+.login-box .desc { color: var(--text-dim); font-size: 13px; margin-bottom: 24px; }
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 18px;
+}
+.input-group label {
+  font-size: 12px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.input-group input {
+  background: var(--panel-2);
+  border: 1px.5px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  color: var(--text);
+  font-size: 15px;
+  outline: none;
+  transition: border-color .2s;
+}
+.input-group input:focus { border-color: var(--accent); }
+
+.btn-full {
+  width: 100%;
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  border-radius: 12px;
+  padding: 13px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all .15s;
+  box-shadow: 0 4px 14px rgba(0,229,255,.3);
+}
+.btn-full:hover { background: #00c8d9; }
+.btn-full:active { transform: scale(.97); }
+
+/* ===== DASHBOARD ===== */
+.dashboard { display: none; }
+.dashboard.active { display: block; }
+
+.toolbar-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+}
+.toolbar-top h2 { margin: 0; font-size: 18px; }
+.btn-logout {
+  background: var(--danger);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 8px 16px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+/* Monpay card */
+.monpay-card {
+  background: linear-gradient(135deg, #1a1a2e 0%, #0d0d17 100%);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+  margin: 16px;
+  box-shadow: 0 0 24px rgba(0,229,255,.1);
+}
+.monpay-card .label {
+  font-size: 12px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.monpay-card .value {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 4px 0 16px;
+}
+.monpay-card .price {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--accent);
+  text-align: center;
+  margin: 12px 0;
+}
+.monpay-qr {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(0,0,0,.3);
+}
+.monpay-qr img { max-width: 100%; max-height: 100%; }
+.monpay-qr .fallback {
+  font-size: 12px;
+  color: var(--text-dim);
+  text-align: center;
+}
+
+/* Subscriptions */
+.subs-section { padding: 16px; }
+.subs-section h3 { margin: 0 0 12px; font-size: 16px; }
+
+.table-wrap {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+th, td {
+  padding: 12px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+th {
+  background: var(--panel-2);
+  color: var(--text-dim);
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(0,229,255,.04); }
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.status-pending { background: rgba(214,167,22,.15); color: var(--warning); }
+.status-active { background: rgba(16,185,88,.15); color: var(--success); }
+.status-expired { background: rgba(230,81,0,.15); color: var(--danger); }
+
+/* Action buttons */
+.btn-action {
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  cursor: pointer;
+  margin-right: 6px;
+}
+.btn-approve { background: var(--success); color: #fff; }
+.btn-expire { background: var(--danger); color: #fff; }
+
+/* Empty state */
+.empty {
+  text-align: center;
+  padding: 40px 16px;
+  color: var(--text-dim);
+}
+.empty .icon { font-size: 40px; margin-bottom: 12px; opacity: .3; }
+
+/* Modal */
+.modal {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 200;
+}
+.modal-content {
+  background: var(--panel);
+  border-radius: 16px;
+  padding: 24px;
+  width: 100%;
+  max-width: 520px;
+  box-shadow: 0 20px 50px rgba(0,0,0,.5);
+}
+.modal h3 { margin: 0 0 16px; font-size: 18px; }
+.modal .field {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+.modal .field .label { color: var(--text-dim); font-size: 13px; }
+.modal .field .value { font-weight: 600; }
+.modal .actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+.btn-close {
+  background: var(--panel-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+.btn-save {
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-weight: 700;
+  cursor: pointer;
+}

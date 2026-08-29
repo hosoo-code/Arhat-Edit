@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0a0a0f" />
+  <title>Админ — ARHAT EDIT</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="data:,">
+  <!-- Supabase SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.5/dist/umd/supabase-min.js"></script>
+</head>
+<body>
+  <!-- HEADER -->
+  <header>
+    <h1>ARHAT EDIT</h1>
+    <div class="subtitle">Хянасан самбар</div>
+  </header>
+
+  <!-- LOGIN SCREEN -->
+  <div class="login-wrap" id="login-section">
+    <div class="login-box">
+      <h2>Нэвтрэх</h2>
+      <div class="desc">Администратар хандивтайгаа нэвтрэнэ үү</div>
+
+      <div class="input-group">
+        <label for="email">Цахим шуудан</label>
+        <input type="email" id="email" placeholder="admin@arhatedit.mn" autocomplete="username" />
+      </div>
+
+      <div class="input-group">
+        <label for="password">Нууц үг</label>
+        <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" />
+      </div>
+
+      <button class="btn-full" id="btn-login">Нэвтрэх</button>
+
+      <p id="login-error" style="color:#e65100;text-align:center;font-size:13px;margin:12px 0 0;display:none;"></p>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="dashboard" id="dashboard-section">
+    <div class="toolbar-top">
+      <h2>Хянасан самбар</h2>
+      <button class="btn-logout" id="btn-logout">Гарах</button>
+    </div>
+
+    <!-- Monpay Payment Info -->
+    <div class="monpay-card">
+      <div class="label">Монгол банкинг — Monpay QR</div>
+      <div class="value">Б.Хос-Эрдэнэ · 99106925689</div>
+      <div class="price">14 999₮</div>
+      <div class="monpay-qr">
+        <img id="monpay-qr-img" src="" alt="Monpay QR" style="display:none;" />
+        <div class="fallback" id="qr-fallback">
+          Monpay<br/>99106925689<br/>14 999₮
+        </div>
+      </div>
+      <div class="label" style="text-align:center;margin-top:12px;font-size:13px;">
+        1 сарын десплейн жагсаалт
+      </div>
+    </div>
+
+    <!-- Subscriptions -->
+    <div class="subs-section">
+      <h3>Хүлэмжүүд</h3>
+      <div class="table-wrap" id="subs-table">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Хэрэглэгч</th>
+              <th>Огноо</th>
+              <th>Статус</th>
+              <th>Үйлдэл</th>
+            </tr>
+          </thead>
+          <tbody id="subs-body">
+            <tr><td colspan="5" class="empty"><div class="icon">📊</div><div>Хүлэмж байхгүй байна</div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detail Modal -->
+  <div class="modal" id="detail-modal" style="display:none;">
+    <div class="modal-content">
+      <h3>Хүлэмжийн дэлгэрэнгүй</h3>
+      <div class="field"><span class="label">Хэрэглэгч</span><span class="value" id="modal-user">-</span></div>
+      <div class="field"><span class="label">Монпай утас</span><span class="value" id="modal-phone">-</span></div>
+      <div class="field"><span class="label">Статус</span><span class="value" id="modal-status">-</span></div>
+      <div class="field"><span class="label">Огноо</span><span class="value" id="modal-date">-</span></div>
+      <div class="actions">
+        <button class="btn-close" id="btn-close-modal">Буцах</button>
+        <button class="btn-save" id="btn-save-status">Хадгалах</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="firebase-config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0a0a0f" />
+  <title>ARHAT EDIT — Mobile Legends Account Editor</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="data:,">
+</head>
+<body>
+  <!-- HEADER -->
+  <header>
+    <div class="logo-stack">
+      <span class="title">ACCOUNT EDITOR</span>
+      <span class="subtitle">ARHAT&nbsp;EDIT</span>
+    </div>
+  </header>
+
+  <!-- TOOLBAR -->
+  <nav class="toolbar">
+    <button class="btn btn-ghost" id="btn-profile">📷 Profile</button>
+    <button class="btn btn-ghost" id="btn-collection">📁 Collection</button>
+    <button class="btn btn-ghost" id="btn-favorite">⭐ Favorite</button>
+    <button class="btn btn-primary" id="btn-add-photos">+ Add Photos</button>
+    <button class="btn btn-warning" id="btn-clear">🗑 Clear All</button>
+
+    <div class="row-controls">
+      <span class="row-label">Row</span>
+      <button class="row-btn" id="row-minus">−</button>
+      <span class="row-value" id="row-value">5</span>
+      <button class="row-btn" id="row-plus">+</button>
+    </div>
+
+    <button class="btn btn-primary" id="btn-save">💾 Save photo</button>
+  </nav>
+
+  <!-- PREVIEW -->
+  <main class="preview-wrap">
+    <div class="canvas-container">
+      <canvas id="editor-canvas" width="1920" height="1080"></canvas>
+    </div>
+  </main>
+
+  <!-- STATUS -->
+  <div class="status-bar">
+    <div class="status-left">
+      <span class="status-dot" id="dot-profile"></span>Profile
+      <span class="status-dot" id="dot-collection"></span>Collection
+      <span class="status-dot" id="dot-favorite"></span>Favorite
+    </div>
+    <span class="status-right" id="status-text">Ready</span>
+  </div>
+
+  <!-- HIDDEN FILE INPUTS -->
+  <input type="file" id="input-profile" accept="image/*" capture="environment" />
+  <input type="file" id="input-collection" accept="image/*" capture="environment" />
+  <input type="file" id="input-favorite" accept="image/*" capture="environment" />
+  <input type="file" id="input-photos" accept="image/*" multiple />
+
+  <script src="editor.js"></script>
+</body>
+</html>
