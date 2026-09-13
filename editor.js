@@ -79,12 +79,16 @@
 
     const bottomY = skinSlot.y + skinSlot.h + gapY;
     const gapX = 16;
-    const colW = (skinSlot.w - gapX * 2) / 3;
+
+    // Panel widths as a % of the row (matches the reference layout):
+    // INFO (profile) 60% | COLLECTOR (collection) 15% | FAVORITE (winrate) 25%
+    const rowW = skinSlot.w - gapX * 2;
+    const PANEL_RATIOS = { info: 0.60, collector: 0.15, favorite: 0.25 };
 
     const infoSlot = {
       x: skinSlot.x,
       y: bottomY,
-      w: colW * 1.15,
+      w: rowW * PANEL_RATIOS.info,
       h: bottomH,
       radius: 14,
       label: "INFO",
@@ -92,7 +96,7 @@
     const collectorSlot = {
       x: infoSlot.x + infoSlot.w + gapX,
       y: bottomY,
-      w: colW * 0.8,
+      w: rowW * PANEL_RATIOS.collector,
       h: bottomH,
       radius: 14,
       label: "COLLECTOR",
